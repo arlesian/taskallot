@@ -1,9 +1,20 @@
-# Plugin boundary and packaging outline
+# Plugin and controller boundary
 
-This document identifies what a future plugin would need to expose. It uses the [proposal interaction](skills/propose/SKILL.md), the four role descriptions, and the controller documents. Its result is a packaging discussion, not a manifest or an installation contract.
+This outline identifies future package responsibilities. Inputs are the skill workflow, job profiles, guidance, and controller design. Output is a packaging discussion, not a manifest.
 
-The proposed package would carry a discoverable description of the proposal capability, its skill guidance, role references, and references for assessment, estimation, selection, and scheduling. The controller is a design responsibility; whether it becomes skill guidance, host functionality, or a separate service is unresolved.
+Use the [shared vocabulary](../controller/task-assessment.md). [Integration](../controller/codex-integration.md) owns invocation evidence and host compatibility.
 
-The plugin's output is a reviewable proposal. Worker execution and any authorization mechanism belong to a later integration design. For example, a user could change a proposed two-worker assignment to one worker and request a refreshed estimate before execution is considered.
+| Component | Responsibility | Boundary |
+| --- | --- | --- |
+| Plugin | Expose five user-facing skills, job profiles, and relevant coding guidance | Guidance does not enforce runtime authority. |
+| Small local controller | Maintain state, lifecycle, messages, accounting, dispatch, and monitoring data | Implementation language and storage engine remain open. |
+| Manager agent | Make coordination decisions and allocate authorized work | Uses controller state; source implementation belongs to developers. |
+| Terminal monitor | Render stored status and budget observations | Routine refresh invokes no model. |
 
-The exact meaning of `/propose` in Codex, any metadata fields, file placement required by a package loader, and distribution format remain unverified. [Codex integration](../controller/codex-integration.md) owns those capability questions; [open decisions](../OPEN-QUESTIONS.md) records the proposed defaults.
+The plugin can recommend or prepare configuration before any run exists. Setup later starts selected work under its authorization envelope. Agents and status inspect the resulting records.
+
+The local controller provides runtime mechanisms that prose alone cannot guarantee. Its host connection, startup model, durable writes, and restart behavior require a future prototype.
+
+Package metadata, supported installation layout, distribution, and exact skill registration remain unresolved. Proposed runtime paths belong to [communication](../controller/agent-communication.md), not package structure.
+
+For example, removing an auditor through plan editing changes assignments and estimates. It does not stop or duplicate an already active assignment automatically.

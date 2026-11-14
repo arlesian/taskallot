@@ -1,45 +1,57 @@
-# Single-agent proposal: locale update
+# Single developer: language selector
 
-This example follows the [canonical format](../plugin/skills/propose/SKILL.md). All token amounts, allowance snapshots, and model capabilities below are illustrative assumptions, not measurements or verified availability.
+This illustrative proposal uses the [canonical fields](../plugin/skills/propose/SKILL.md) and [shared vocabulary](../controller/task-assessment.md). All IDs, quantities, and model capabilities are invented. No work ran.
 
-## Task and context
+Token amounts use thousands of tokens. A range shows lower and upper scenarios, not calibrated coverage.
 
-A language selector updates the visible page only after navigating away and back. Acceptance requires the selected language to appear on the current page without navigation and remain correct after later navigation. Existing language selection behavior should still work.
+## Outcome and acceptance criteria
 
-This is provisionally a moderately difficult, tightly coupled state propagation problem. No source has been inspected; a missing subscription is only one possible cause. Assume balanced and strong coding models with medium and high effort are available. A later urgent migration check is independent and needs a protected high estimate of 12,000 tokens. Its priority is higher, but its required input is not ready yet.
+The language selector updates the visible page only after navigation. Task `locale` requires:
 
-## Recommended workers
+- C1: Selecting a language updates the current page without navigation.
+- C2: Later navigation preserves the selected language and existing selection behavior.
 
-| Worker | Assignment and role primitives | Model and effort | Deliverable and completion | Typical tokens | High tokens |
-| --- | --- | --- | --- | --- | --- |
-| Locale worker | Trace the locale update, implement the fix, and verify it without navigation; investigate, implement, verify | Balanced coding model, medium effort; actual identifier unverified | Causal explanation, bounded patch, and evidence for immediate and post-navigation updates; complete when conditions are evidenced or a blocker is reported | 8,000 | 16,000 |
+One developer can trace the state flow, implement the change, and self-check both criteria. Shared context outweighs any currently identified reason to split.
 
-The same worker owns diagnosis, change, and checks, reusing the locale flow context. No independent review or worker handoff is proposed.
+## Assignments
 
-## Why this plan
+| Agent | Role | Assignment | Reports to | Model | Effort | Deliverable | Central; range |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| D1 | Developer | L1: diagnose, fix, and self-check C1–C2 | User; no manager | Balanced coding capability; identifier unresolved | Medium | Patch, cause, checked revision, results, and gaps | 8; 5–16 |
 
-One agent can follow the state update to its consumer and check the resulting behavior in the same context. There is no current evidence of separable work or a failure boundary that needs a fresh interpretation. A second worker would duplicate context before it offered a clear acceptance benefit. No alternative is shown because the task description provides no meaningful reason to split.
+This is self-checking, not independent audit or review. A dedicated manager offers little benefit for this bounded task.
 
-## Usage and uncertainty
+## Plan usage and session budget
 
-| Component | Typical tokens | High tokens |
+| Component | Central tokens | Range |
 | --- | --- | --- |
-| Controller planning and proposal | 2,000 | 4,000 |
-| Locale worker, inclusive | 8,000 | 16,000 |
-| Estimated plan total | 10,000 | 20,000 |
+| Planning model calls | 2 | 1–4 |
+| D1, including context, checks, reports, and one bounded repair | 8 | 5–16 |
+| Plan total | 10 | 6–20 |
 
-These are cold-start heuristic scenarios using only the symptom, assumed local scope, and expected checks. Worker usage includes supplied context, diagnosis, patch, verification, and final report. There are no handoff charges. Typical assumes a focused fix with routine iteration; high allows a broader trace and one bounded repair and recheck. A cross-system localization redesign is outside both scenarios. Uncertainty is substantial, and high is not a cap.
+| Session snapshot before planning | Tokens |
+| --- | --- |
+| User session budget | 50 |
+| Previously observed usage | 10 |
+| Other active reservations | 6 |
+| Protected future migration check | 12 |
+| Uncommitted before this plan | 22 |
+| Uncommitted after reserving this plan's upper scenario | 2 |
 
-## Session implications
-
-At planning start, assume a user-supplied remaining token envelope of 40,000 and high remaining reservations of 6,000 for other active work. That leaves 34,000 before this proposal's plan. Provider quota percentage and reset time are unknown.
-
-After existing reservations and this plan, 24,000 tokens remain in the typical scenario and 14,000 in the high scenario. Both preserve the migration check's 12,000 high estimate, leaving 12,000 or 2,000 for other unstarted work. These are token planning amounts, not inferred provider capacity. Planning overhead is included from the snapshot and must be reconciled once as actual usage becomes known. If the migration input becomes ready, scheduling must reconsider its higher priority before dispatch.
+If this plan consumes its central estimate, 12 remains uncommitted with other holds unchanged. Provider allowance and reset times are unknown. These token amounts do not imply provider capacity.
 
 ## Assumptions and escalation
 
-Assume a local state or rendering issue and an environment where the visible behavior can be checked. A translation service defect, cross-process cache, or inability to observe the page changes scope and weakens these estimates. Escalate to a strong model at high effort if tracing reveals difficult coupled state transitions; consider another worker only if a distinct independent question appears. Re-estimate before adding work, especially if it would consume the migration reservation. Missing execution evidence must be reported as a gap.
+Source: cold-start heuristic created for this illustrative draft. No repository evidence establishes a local state defect yet. Refresh after scope or model changes.
 
-## Decision and edits
+The range includes supplied context, tool output, reporting, routine iteration, and one repair with recheck. No handoff or manager cost is included.
 
-Recommend the single locale worker provisionally, subject to model availability and confirmation of the session snapshot. No workers have started. The user can edit the scope, assignment, effort, or protected later work; refresh affected estimates and session implications before a separate execution decision.
+Cross-process caching, inaccessible page behavior, or a translation service defect requires re-estimation. Preserve C1–C2. Report unavailable checks as gaps.
+
+The selected policy can allow one in-scope repair. Broader source authority, extra agents, or spending beyond its envelope needs user input.
+
+## Plan reference or next action
+
+Illustrative draft reference: `plan-locale`, revision 1. This example creates no persisted plan or runtime records.
+
+Use [plan](../plugin/skills/plan/SKILL.md) to edit or persist the recommendation. A later [setup](../plugin/skills/setup-agents/SKILL.md) starts the selected revision. Without a manager, the controller handles predefined work and accounting; the user assesses task acceptance.

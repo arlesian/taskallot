@@ -1,51 +1,83 @@
-# Multiple-agent proposal: duplicate essay scoring
+# Managed team: duplicate essay scoring
 
-This example follows the [canonical format](../plugin/skills/propose/SKILL.md). All token amounts, allowance snapshots, and model capabilities below are illustrative assumptions, not measurements or verified availability.
+This illustrative proposal uses the [canonical fields](../plugin/skills/propose/SKILL.md) and [shared vocabulary](../controller/task-assessment.md). All IDs, quantities, artifacts, results, and model capabilities are invented. No agents or checks ran.
 
-## Task and context
+Token amounts use thousands of tokens. Ranges are heuristic scenarios.
 
-An interrupted callback may cause an essay to be scored twice. Acceptance requires that replaying the same scoring operation after interruption produces one recorded score and no duplicate downstream scoring effects. A genuinely new scoring request must remain distinguishable from a replay. Confirm the operation identity and effect boundaries during investigation.
+## Outcome and acceptance criteria
 
-This is provisionally a difficult correctness problem involving retries and durable effects. Assume strong and balanced coding models with high and medium effort are available. A later migration audit has a high estimate of 20,000 tokens, is higher priority, and depends on an external artifact that has not arrived. Other active work is already reserved.
+An interrupted callback can cause duplicate essay scoring. Task `scoring` requires:
 
-## Recommended workers
+- C1: Replay of the same scoring operation produces one recorded score and no duplicate downstream scoring effects.
+- C2: A genuinely new scoring request remains distinct and can complete normally.
 
-| Worker | Assignment and role primitives | Model and effort | Deliverable and completion | Typical tokens | High tokens |
-| --- | --- | --- | --- | --- | --- |
-| Fix worker | Trace callback interruption and replay, implement the fix, and check the affected flow; investigate, implement, verify | Strong coding model, high effort; actual identifier unverified | Causal evidence, patch, check results, and integration of findings; complete when checks and agreed bounded repairs are reported, or blocked | 14,000 | 24,000 |
-| Independent worker | Derive interruption cases from requirements, verify them against the fix, and review the change; investigate, verify, review | Balanced coding model, medium effort; actual identifier unverified | Independently derived cases, results, and prioritized findings; complete when conditions have evidence or explicit gaps and blockers | 6,000 | 10,000 |
+Use a manager, developer, and independent auditor. Independent interruption cases can expose assumptions shared by a patch and its developer's self-checks.
 
-Both receive the same acceptance conditions and relevant interface facts. Initially withhold the fix worker's diagnosis and patch from the independent worker so it can derive cases separately. Case derivation can run in parallel with diagnosis and implementation. Then hand over the patch and notes for verification and review. The fix worker owns integration of findings and the bounded repair already allowed for in its estimate; the independent worker rechecks affected cases within its allowance.
+## Assignments
 
-## Why this plan
+| Agent | Role | Assignment | Reports to | Model | Effort | Deliverable | Central; range |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| M1 | Manager | S0: coordinate, allocate bounded follow-ups, and assess C1–C2 | User | Balanced coding capability | Medium | Decisions, gap tracking, acceptance assessment | 3; 2–6 |
+| D1 | Developer | S1: trace and fix replay; integrate one bounded repair if needed | M1 | Strong coding capability | High | Patch, causal evidence, self-checks, and handoff | 16; 10–26 |
+| A1 | Auditor | S2: derive independent cases, audit the patch, and recheck one repair | M1 | Balanced coding capability | Medium | Checked revision, failure cases, results, and gaps | 8; 5–13 |
 
-Compare one strong agent with this two-agent team. One agent could diagnose, fix, and test the flow, but its tests may repeat the assumption behind the patch. Independent case derivation can expose interruption after recording a score but before callback acknowledgement, or confusion between a replay and a new request. The second worker adds a different view of the failure boundary, not another implementation owner. Two workers are the smallest useful team for that benefit.
+Actual model identifiers remain unresolved. M1 owns coordination, not source implementation. D1 owns integration in its assigned workspace.
 
-A meaningful alternative under tighter allowance is one strong coding worker at high effort, assigned investigate, implement, verify, and review, with review explicitly performed as self-review. It delivers the patch, failure-case analysis, and check evidence, completing with evidenced conditions or reported gaps. Its illustrative worker estimate is 16,000 typical and 27,000 high tokens, reflecting added case derivation and self-review despite fewer handoffs. The same controller overhead of 3,000 and 5,000 gives a 19,000 typical and 32,000 high plan. This saves 4,000 typical or 7,000 high tokens relative to the team, but loses independent challenge.
+A1 first derives cases without D1's diagnosis. That work can overlap S1. Patch execution waits for D1's artifact reference. Any repaired patch requires affected checks to run again.
 
-## Usage and uncertainty
+## Plan usage and session budget
 
-| Component | Typical tokens | High tokens |
+| Component | Central tokens | Range |
 | --- | --- | --- |
-| Controller planning and proposal, including alternative comparison | 3,000 | 5,000 |
-| Fix worker, inclusive | 14,000 | 24,000 |
-| Independent worker, inclusive | 6,000 | 10,000 |
-| Estimated plan total | 23,000 | 39,000 |
+| Planning model calls, including comparison | 3 | 1–5 |
+| Manager M1 | 3 | 2–6 |
+| Developer D1, including bounded repair | 16 | 10–26 |
+| Auditor A1, including recheck | 8 | 5–13 |
+| Team total | 30 | 18–50 |
 
-These are cold-start heuristic scenarios based on the symptom, expected effect boundaries, and bounded assignments. Worker totals include initial and repeated context, producing and consuming handoff notes, checks, and reports. Typical assumes a focused repair with routine iteration; high includes one repair cycle responding to independent findings and a recheck. A storage redesign or repeated unsuccessful repairs is outside the estimate. Uncertainty is high because callback identity, persistence behavior, and downstream effects are unconfirmed. Summed high estimates are a conservative scenario, not a confidence guarantee.
+Inclusive estimates cover context, tools, messages, reports, and checks. The repair exposure is not an additional charge above these rows.
 
-## Session implications
+| Session snapshot before planning | Tokens |
+| --- | --- |
+| User session budget | 100 |
+| Previously observed usage | 20 |
+| Other active reservations | 8 |
+| Protected future migration audit | 20 |
+| Uncommitted before this plan | 52 |
+| Uncommitted after reserving the team's upper scenario | 2 |
 
-At planning start, assume a user-supplied remaining token envelope of 70,000 and high remaining reservations of 8,000 for other active work. There are 62,000 tokens available before this plan. Provider quota percentage and reset time are unknown.
+Central consumption would leave 22 uncommitted with other holds unchanged. Provider allowance and reset times are unknown.
 
-The team leaves 39,000 tokens under typical usage or 23,000 under high usage after active reservations. Protecting the later migration audit's 20,000 high estimate leaves 19,000 or 3,000 for other unstarted work. Planning usage is included from the snapshot and must be reconciled once. If the audit artifact arrives, its priority changes the next dispatch decision.
+### Material alternative under tighter allowance
 
-If only 34,000 tokens were available for this task after active reservations and protected later work, the team's 39,000 high scenario would not fit. The one-agent alternative's 32,000 high scenario would leave 2,000. Recommend that alternative only with the independence tradeoff visible. If even that cannot fit, propose deferral or a bounded investigation with a new estimate; do not call a partial investigation a completed fix. An unconfirmed quota reset is not a reason to spend the protected allowance.
+| Agent | Role | Assignment | Reports to | Model | Effort | Deliverable | Central; range |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| D2 | Developer | Diagnose, fix, derive failure cases, and self-check C1–C2 | User; no manager | Strong coding capability; identifier unresolved | High | Patch, failure-case evidence, checked revision, and gaps | 24; 16–37 |
+
+With the same planning estimate, this plan totals 27, range 17–42. Compared with the team, it saves 3,000 central or 8,000 upper-scenario tokens.
+
+If only 44 were available after other holds, the team would not fit its upper scenario. This alternative would leave 2. It preserves behavioral checks but loses independent assessment. If that assurance is required, defer instead.
 
 ## Assumptions and escalation
 
-Assume operation identity can be established and the relevant scoring effects can be observed. Escalate if independent cases reveal a durable-effect boundary the patch cannot protect, or if the balanced model cannot assess the failure cases adequately. Additional model strength or a redesigned persistence approach needs new estimates and a revised proposal. On overrun or failure, retain usage already spent, replace remaining reservations, and reassess whether repair or deferral best protects session priorities.
+Source: cold-start heuristics for this draft. Operation identity, persistence, and downstream effect boundaries remain unconfirmed. Refresh estimates after findings or model resolution.
 
-## Decision and edits
+The team policy permits one repair assignment and one affected-case recheck within its selected scope and budget. Repeated failure, storage redesign, or broader authority requires a revised decision.
 
-Recommend the two-worker team under the main illustrative snapshot because independent failure analysis adds value and preserves the later audit allowance. Availability, priorities, and acceptance boundaries still need confirmation. No workers have started. The user can edit the team, case scope, model choices, or budget assumptions; refresh estimates and session implications before a separate execution decision.
+Preserve C1–C2 through every handoff. Stop for user input only when the authorization envelope must expand. Normal reports and bounded follow-ups need no repeated confirmation.
+
+## Plan reference or next action
+
+Illustrative draft: `plan-scoring`, revision 1. Persist and select it before setup. The following cycle describes future behavior only.
+
+| Step | Illustrative record or action |
+| --- | --- |
+| Start | Setup creates run `R-score`, records S0–S2, and dispatches ready work. |
+| Report | A1 submits report `AR1` for patch `P1`: interruption after recording a score repeats a downstream effect. C1 fails; C2 passes. |
+| Decision | M1 records the blocking gap and issues follow-up S3 to D1. S3 covers only the exposed boundary and fits the existing repair allowance. |
+| Delivery | Controller records derived revision 2 and delivers S3 once as an assignment. Repeated notification does not create another attempt automatically. |
+| Repair | D1 submits patch `P2` and report `DR2`. M1 assigns the permitted recheck S4 to A1. |
+| Evidence | Report `AR2` identifies P2 and checks interruption before and after each effect, concurrent replay, and a distinct new request. C1–C2 pass in the stated environment. |
+| Acceptance | M1 records its assessment with AR2 and remaining limits. Controller records criterion decisions. User acceptance is recorded separately. |
+
+The repair allowance is assigned to S3 and S4 when needed, not reserved again. Missing receipts or uncertain launch state trigger reconciliation before any retry.

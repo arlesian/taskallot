@@ -1,25 +1,53 @@
-# Session scheduling
+# Session scheduling and budget policy
 
-Scheduling allocates attention and allowance across all known session work, not just the latest task. It uses remaining tasks, priority, dependencies, acceptance state, active workers, reservation estimates, allowance snapshots, and known quota reset times. Its result is a proposed next assignment and a revised session outlook; dispatch remains subject to the [proposal interaction](../plugin/skills/propose/SKILL.md).
+Scheduling selects ready work across the known session. It uses priorities, dependencies, [active forecasts](usage-estimation.md), provider observations, and the selected [plan policy](plan-format.md).
 
-## Allowance and reservations
+The manager proposes allocation decisions. The controller validates authority, reserves allowance, and dispatches eligible assignments. Without a manager, it advances only predefined work. See the [shared vocabulary](task-assessment.md).
 
-Track predicted and observed tokens in a token planning ledger. Keep provider-reported quota percentages, their scope, observation time, and reset time separately. A user-supplied token envelope can guide planning, but is not a provider guarantee. Do not convert percentages to token counts without a verified provider mapping. Missing quota information or reset times are unknown, never zero or unlimited.
+## Separate budget values
 
-Reserve for active workers before offering allowance to new work. Proposed default: use each active assignment's high estimate of remaining usage; update it from observed progress rather than repeatedly reserving its original total. Pending proposals show hypothetical reservations. Deduct actual usage once, release unused reservations when a worker finishes, and replace reservations when revising rather than stacking old and new totals. Already spent planning tokens need the same reconciliation.
+| Value | Meaning |
+| --- | --- |
+| Provider allowance observation | Reported bucket scope, used or remaining percentage, observation time, and reset time. |
+| Session token budget | User-defined token envelope with a declared accounting start and scope. |
+| Observed usage | Confirmed consumption within that session scope. |
+| Active reservations | Budget held for estimated remaining active assignments, including uncertain ongoing activity. |
+| Protected future work | Budget held for known priority work, including dependencies not ready yet. |
+| Uncommitted budget | Session budget after observed usage, active reservations, and protected future work are deducted once. |
 
-Protect known higher-priority work, including work that becomes actionable only after dependencies finish. Choose among ready tasks using priority and dependency effects, then assess feasible plans with the allowance left after reservations. Reset times may make deferral useful, but only a confirmed reset with a known scope can replenish that scope. Unknown allowance supports a conditional proposal, not an assertion that it fits. Reservation margins and priority tie-breaking remain [open decisions](../OPEN-QUESTIONS.md).
+Proposed default: reserve the upper remaining estimate for active work. State any extra uncertainty margin separately. Waiting future work belongs in protected work or an explicit uncommitted queue, not both.
 
-## Session tradeoffs
+Do not infer an exact token balance from a provider percentage without a verified conversion. A provider reset changes only its reported bucket. It does not replenish the user-defined session budget automatically.
 
-Spending more now can help the whole session: a shared authentication failure might block several priority fixes. One stronger worker that reliably removes the blocker may preserve more downstream work than repeated cheap attempts. Include this dependency benefit when comparing plans.
+Missing or delayed usage is unknown, not zero. Show a provisional budget balance and hold an explicit uncertainty reservation when appropriate. If no defensible margin exists, block additional autonomous dispatch until reconciliation.
 
-Preserving allowance can be better: a small locale display defect with low coupling may need only one capable worker, leaving room for a later urgent migration check. Independent review of the locale patch may add less value than protecting that later task. These are planning judgments, not measured performance claims.
+## Allocation and reconciliation
 
-## Revision after events
+Protect higher-priority known work before assigning uncommitted budget. Among ready tasks, consider user priority and dependency benefit. Explicit user priorities outrank inferred ones.
 
-After an overrun, replace the affected worker's remaining estimate, retain spent usage, and recheck reservations and future tasks. Propose a narrower next step, deferral, or stronger model only if its benefit still fits; do not keep retrying on the old budget.
+Update reservations when remaining estimates change. Deduct observed consumption once and replace the remaining reservation. Release unused reservations after confirmed completion. Do not release uncertain activity merely because contact was lost.
 
-After failure, use the failure evidence to distinguish repair, renewed investigation, and a blocked acceptance condition. Estimate additional work separately and update the recommendation. Worker completion is not necessarily task acceptance, as [evaluation](../evaluation/outcomes.md) explains.
+Include planning and manager calls. Reconcile already incurred planning usage against the stated snapshot. Preserve original predictions for evaluation. [Estimation](usage-estimation.md) owns token-category and aggregation rules.
 
-When a new task arrives or priorities change, reassess ready work and dependencies. Avoid treating reserved active work as free allowance. Propose finishing, pausing, or changing active work where the host permits it, identify sunk and duplicated costs, and refresh the user's proposal. An event does not itself authorize another worker or automatic replacement execution.
+Spending more now can benefit the session. A strong developer may resolve an authentication blocker that prevents several priority tasks. Repeated weak attempts can cost more and leave those tasks blocked.
+
+Preserving allowance can be better. A routine locale fix may need one developer, leaving capacity for a later critical migration audit. A difficult critical task may deserve the stronger model while less important work waits.
+
+## Policy actions
+
+| Trigger | Proposed behavior |
+| --- | --- |
+| Overrun or new evidence | Retain spent usage, revise remaining estimates, and reconsider ready work. |
+| Failure | Assess repair, investigation, or deferral; enforce bounded retry rules. |
+| New priority task | Recheck dependencies and protected work before new dispatch. |
+| Low allowance | Preserve critical capability; defer lower-value work or propose a scope revision. |
+| Pause | Stop new dispatch and request a safe execution boundary. Record effects that may already have occurred. |
+| Resume | Reconcile activity, allowance, evidence, and estimates before continuing. |
+| Confirmed reset | Refresh the affected provider bucket; reconsider deferred work without inventing a token conversion. |
+| Scope or authority expansion | Request user input under the [setup boundary](../plugin/skills/setup-agents/SKILL.md). |
+
+Normal authorized handoffs and bounded repairs proceed without repeated confirmation. A manager can choose among permitted follow-ups but cannot expand the authorization envelope.
+
+Planning thresholds are not hard runtime token limits. Usage events may arrive late, and an in-flight turn can overshoot a reservation or budget. Check before dispatch and at observable boundaries. Request interruption when policy requires it, then reconcile actual effects.
+
+Do not claim immediate cancellation, exact cutoff, or rollback without verified host support. Reservation margins, stale-data thresholds, reset handling, and priority tie-breaking remain [open](../OPEN-QUESTIONS.md).

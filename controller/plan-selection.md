@@ -1,15 +1,29 @@
-# Plan selection
+# Setup and model selection
 
-Selection recommends an agent setup from the [task brief](task-assessment.md), available models and reasoning efforts, [pre-dispatch estimates](usage-estimation.md), and [session constraints](session-scheduling.md). Its result is one justified plan in the [proposal format](../plugin/skills/propose/SKILL.md).
+Selection recommends one setup from the [task brief](task-assessment.md), user preferences, supported model settings, [estimates](usage-estimation.md), and [session policy](session-scheduling.md).
 
-Consider a one-agent plan first. When there is a credible benefit from parallel work, independent judgment, or distinct expertise, compare it with the smallest useful team. Describe the specific benefit and include duplicated context, coordination, integration, and repair exposure in the estimate. Do not split work merely because several roles are present. A second worker needs a bounded deliverable that can affect acceptance.
+Its output uses the compact [proposal format](../plugin/skills/propose/SKILL.md). It does not launch agents.
 
-Choose a model and effort for each assignment using difficulty, uncertainty, likely benefit from stronger reasoning, and session allowance. A difficult but tightly coupled bug may call for one strong model at high effort. A narrower independent verification assignment may suit a less costly model at medium effort. A second worker can add independent reasoning even when increasing the first worker's effort would not. Stronger reasoning is not assumed to improve every task.
+## Team and role choice
 
-Use actual supported model identifiers and effort settings when verified. With missing availability, recommend provisional capability tiers and efforts and flag that they need resolution; do not claim that a named model exists or that a tier has a known price. Model mappings and effort policy are [open decisions](../OPEN-QUESTIONS.md).
+Consider one developer first for a cohesive task. Diagnosis, implementation, and self-checks can share context without creating separate job profiles.
 
-Weigh expected acceptance and repair risk against total usage while protecting higher-priority session work. Prefer a cheaper plan when extra usage offers no credible benefit. Consider elapsed time when the user values it, but do not treat parallel execution as token savings. There is no fixed team-size score, difficulty threshold, or escalation multiplier yet.
+Compare the smallest useful team when independent assessment, separable experiments, or clear parallel ownership can improve the outcome. Include duplicated context, management, handoffs, integration, and repair in its cost.
 
-Recommend one plan. Show another only when it changes a meaningful tradeoff, such as independent failure analysis versus preserving allowance. If no credible plan fits, explain a narrower scope or deferral instead of silently removing required verification.
+A dedicated manager is optional for small single-agent work. Use one when reports, dependencies, and follow-ups require coordination. Count manager usage explicitly.
 
-For the locale symptom, shared causal context can make one worker sufficient. For duplicate scoring, independently deriving interruption cases can expose an assumption shared by the patch and its author's checks. The [examples](../examples/multi-agent.md) show that benefit and the tighter-budget alternative.
+Recommend one setup. Show an alternative only when it changes a material tradeoff. For example, removing an independent auditor saves usage but reduces independent failure analysis.
+
+## Model and effort choice
+
+Choose each agent's settings using task difficulty, uncertainty, expected acceptance, likely repair exposure, and remaining allowance. Prefer a cheaper setup when extra usage provides no credible benefit.
+
+A difficult but tightly coupled defect may need one strong developer. Independent review can justify another reasoning context even when stronger developer effort cannot replace that independence.
+
+Low allowance does not automatically imply a weaker model. A critical difficult task can justify preserving a strong model and deferring lower-priority work. A routine bounded audit can use a less costly model when it can assess the criteria adequately.
+
+Use verified model identifiers and supported efforts before dispatch. Capability labels are provisional when availability is unknown. Do not override explicit user selections silently.
+
+Do not treat parallel execution as token savings. Consider elapsed time only when it supports the user's priorities. Selection thresholds and model mappings remain [open](../OPEN-QUESTIONS.md).
+
+If no credible setup fits, propose deferral, a narrower accepted scope, or bounded investigation. Do not silently drop required checks or weaken acceptance.

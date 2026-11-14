@@ -1,17 +1,45 @@
-# Task assessment
+# Task assessment and shared vocabulary
 
-Assessment converts the task description and available session context into acceptance conditions and planning constraints. Its result is a task brief for [plan selection](plan-selection.md) and [usage estimation](usage-estimation.md), with evidence separated from assumptions.
+Assessment turns user intent and available session context into a task brief. The brief supports [selection](plan-selection.md), [estimation](usage-estimation.md), and [plan editing](plan-format.md).
 
-## Vocabulary
+## Shared vocabulary
 
-A role is a responsibility primitive with a deliverable and completion condition: [investigate](../plugin/roles/investigate.md), [implement](../plugin/roles/implement.md), [verify](../plugin/roles/verify.md), or [review](../plugin/roles/review.md). These are the four fixed primitives in this design. Future additions are possible through an explicit vocabulary revision.
+These definitions govern the scaffold.
 
-An agent, also called a worker, is one proposed execution participant with a selected model and reasoning effort. An assignment is that worker's task-specific work, composed from one or more role primitives. An assignment label can vary without creating a new primitive. A plan combines workers, assignments, dependencies, estimates, and session implications. A team contains more than one worker; four roles do not require four agents. The controller prepares proposals and schedules; its usage is accounted for separately from workers.
+| Term | Meaning |
+| --- | --- |
+| Role | A reusable job profile with responsibility, authority, deliverables, and completion conditions. |
+| Agent | A runtime participant with an identity, model, reasoning setting, and assigned roles. |
+| Task | A user-relevant outcome with acceptance criteria. |
+| Assignment | A bounded piece of task work given to one accountable agent. |
+| Plan | The versioned description of tasks, assignments, agents, dependencies, and budget policy. |
+| Run | One execution instance of a plan, including later revisions and actual results. |
+| Manager | The agent responsible for coordination and work allocation. |
+| Controller | The software that maintains state, delivers messages, dispatches work, and accounts for usage. |
 
-## Inputs and result
+Several agents can contribute assignments to one task. A role does not imply a separate agent. An assignment names its owner, boundaries, deliverable, and relevant acceptance criteria.
 
-Use the requested behavior, acceptance evidence, repository context already available, likely scope and difficulty, uncertainty, coupling, risk of failure, and opportunities for independent work. Include available models and efforts, allowance information, and other session tasks with their priorities and dependencies. Unknown inputs stay unknown. Explicit user priorities outrank inferred ones.
+The initial job profiles are [manager](../plugin/roles/manager.md), [investigator](../plugin/roles/investigator.md), [developer](../plugin/roles/developer.md), [auditor](../plugin/roles/auditor.md), and [reviewer](../plugin/roles/reviewer.md). Future profiles can extend this vocabulary.
 
-Assess before dispatch. Source inspection by future workers is not evidence already available to the proposal. With only a symptom description, infer a provisional scope, name its assumptions, and identify what would change the brief. Do not invent a root cause or require a preliminary worker just to provide a recommendation.
+## Inputs and output
 
-For the locale symptom, a possible acceptance condition is that selecting another language updates the current page without navigation and continues to work after navigation. A proposed assignment can be “trace the locale update, implement the fix, and verify it without navigation,” combining three roles in one agent. Whether that scope is truly local remains an assumption until investigated.
+Use the requested outcome, known behavior, repository context, uncertainty, difficulty, and failure consequences. Include session priorities, dependencies, available models, and allowance observations when available.
+
+The output identifies acceptance criteria, likely scope, evidence gaps, and useful assignment boundaries. Separate supplied facts from assumptions. A task description alone supports a provisional brief.
+
+Do not treat future discoveries as available evidence. Preserve acceptance criteria through delegation. A manager can divide work without weakening the task outcome. Criterion changes require a recorded plan revision and appropriate user authorization.
+
+For example, the locale task requires an immediate language change on the current page. A developer can diagnose, implement, and self-check that behavior. This does not establish independent review.
+
+## Distinct outcomes and their records
+
+The controller owns each authoritative record. The evidence producer and decision authority differ.
+
+| Outcome | Evidence or decision source | Controller record |
+| --- | --- | --- |
+| An agent turn ended | Host event with completed, failed, or interrupted status | Turn result and host references; no inferred assignment completion |
+| An assignment report was submitted | Agent submits a complete report | Durable report reference, assignment status, and receipt |
+| Required checks passed | Developer or auditor supplies results for a specific artifact revision | Check outcomes, checked revision, evidence, and unavailable checks |
+| The task met its acceptance criteria | Manager assesses evidence under the plan's acceptance policy; user decides when no manager exists | Criterion-level decision, authority, evidence references, and unresolved gaps |
+
+A report can contain failures. Passing checks can still leave acceptance gaps. The controller records a manager's assessment; it does not invent one from agent inactivity. User acceptance remains a separate evaluation outcome.
