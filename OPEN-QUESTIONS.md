@@ -1,0 +1,19 @@
+# Decisions to review
+
+These are proposed defaults, not implementation commitments. Change a decision in its linked home and then update dependent examples. No threshold, model identifier, predictor architecture, or storage format is fixed by this scaffold.
+
+| Choice | Proposed default for discussion | Affected home |
+| --- | --- | --- |
+| What does `/propose` mean in Codex, and how is it packaged? | Retain the working interaction name and prose references; verify host conventions before choosing invocation or package metadata | [Codex integration](controller/codex-integration.md), [manifest outline](plugin/manifest-outline.md) |
+| What accepts a proposal and starts work? | Keep proposal and execution separate; user edits trigger refreshed estimates, and a later explicit execution action is required. Exact host mechanism is unresolved | [Proposal skill](plugin/skills/propose/SKILL.md) |
+| Where does the controller run? | Prefer the smallest host-supported arrangement; do not assume a service or executable controller is necessary | [Manifest outline](plugin/manifest-outline.md) |
+| Which models and effort settings are selectable? | Resolve actual supported identifiers at proposal time; use capability labels only for provisional choices. Do not hard-code a model list yet | [Plan selection](controller/plan-selection.md) |
+| When does another worker or stronger effort justify its cost? | Require a concrete acceptance benefit and session fit; no numeric difficulty, cost-benefit, or escalation threshold until evidence exists | [Plan selection](controller/plan-selection.md) |
+| What counts as comparable history, typical, and high? | Begin with coarse model, effort, assignment, and context comparisons; use a central value and conservative upper range. Exact statistics, minimum samples, and calibration targets need review | [Usage estimation](controller/usage-estimation.md) |
+| What predictor comes after the baseline? | Train and compare a separate predictor only once useful outcome history exists; leave architecture, features beyond the stated input boundary, and adoption threshold undecided | [Usage estimation](controller/usage-estimation.md) |
+| How much allowance is reserved, including repair? | Reserve the high estimate of remaining active work and protect higher-priority work; review additional margins and the appropriate bounded repair exposure | [Session scheduling](controller/session-scheduling.md) |
+| What breaks priority ties or justifies spending more on a blocker? | Honor user priority first, then dependency benefit among ready work; ask the user about meaningful unresolved priority conflicts. No fixed score or weighting yet | [Session scheduling](controller/session-scheduling.md) |
+| Which quota data is trustworthy and fresh enough? | Keep scoped, timestamped provider percentages separate from token estimates; treat missing data and unverified resets as unknown | [Session scheduling](controller/session-scheduling.md), [Codex integration](controller/codex-integration.md) |
+| Where are proposals, usage, and outcomes retained? | Favor a minimal user-visible record of pre-dispatch features and outcomes; choose storage format, location, consent, retention, and visibility after integration discovery | [Evaluation](evaluation/outcomes.md) |
+| How should routing benefit be demonstrated? | Compare against one worker at a fixed available model and effort under matched allowances; leave exact baseline settings, priority weights, sample size, repair window, and improvement threshold open | [Evaluation](evaluation/outcomes.md) |
+| How can role vocabulary grow? | Keep the four primitives stable initially; add a primitive only when its responsibility and completion condition cannot be expressed as a task-specific assignment | [Task assessment](controller/task-assessment.md) |
